@@ -62,9 +62,15 @@ class Gui():
         self.dialogonota.grab_set()
         self.ventana_principal.wait_window(self.dialogonota)
 
-    def guardar(self,texto,etiqueta=''):
-        texto=get.self.caja
-        pass
+    def guardar(self):
+        
+        nota=self.anotador.nueva_nota(self.cajanota.get(),self.cajaetiqueta.get())
+        self.dialogonota.destroy()
+        self.treeview.insert("",tkinter.END,text=nota.id,
+                                     values=(nota.texto,nota.etiquetas),iid=nota.id)
+
+        
+        
 
     def modificar_nota(self):
         '''Modifica la nota seleccionada (texto o etiquetas)'''
@@ -72,13 +78,38 @@ class Gui():
 
     def eliminar_nota(self):
         '''Elimina la nota seleccionada'''
+    
         pass
 
     def buscar_notas(self):
         '''Busca y muestra las notas que coincidan con un filtro de búsqueda 
         dado'''
-        pass
-        
+        filtro = self.cajaBuscar.get()
+        notas = self.anotador.buscar(filtro)
+        if notas:
+            self.poblar_tabla(notas)
+        else:
+            messagebox.showwarning("sin resultados","la busqueda no arrojo resultados")
+
+
+    def poblar_tabla(self,notas=None):
+        '''limpia el treeview y desoues agrega las notas que recibe en "notas"
+        ,sino recibe nada trabaja con todas las notas'''
+
+#limpiar treeview        
+        for i in self.treeview.get_children():
+            self.treeview.delete(i)
+
+#insertar datos de notas
+        if not notas:
+            notas=self.anotador.notas
+        else:
+            for nota in notas:
+                self.treeview.insert("",tkinter.END,text=nota.id,
+                                     values=(nota.texto,nota.etiquetas),iid=nota.id)
+
+
+
 
 if __name__ == "__main__":
     g = Gui()
